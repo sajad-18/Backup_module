@@ -1,5 +1,7 @@
 import os
 import shutil
+import time
+import subprocess
 
 
 def get_valid_dirs():
@@ -96,6 +98,59 @@ def check_space_and_confirm(valid_dirs, goal_dir):
         while confirm not in ('y', 'n'):
             confirm = input('❓ Please enter only "y" or "n": ').strip().lower()
         return confirm == 'y'
+
+
+def copy_with_progress(source_dirs, destination_root):
+    all_files = []
+    total_size = 0
+    for folder in source_dirs:
+        for root, _, files in os.walk(folder):
+            for f in files:
+                try:
+                    path = os.path.join(root, f)
+                    size = os.path.getsize(path)
+                    all_files.append((path, root))
+                    total_size += size
+                except:
+                    continue
+
+    copied_size = 0
+    total_files = len(all_files)
+
+    print(f"\n📁 Starting copy of {total_files} files...\n")
+
+    for index, (file_path, original_root) in enumerate(all_files, start=1):
+        try:
+            relative_path = os.path.relpath(file_path, original_root)
+            destination_dir = os.path.join(destination_root,
+                                           os.path.relpath(original_root, os.path.commonpath(source_dirs)))
+            os.makedirs(destination_dir, exist_ok=True)
+
+            destination_path = os.path.join(destination_dir, relative_path)
+            shutil.copy2(file_path, destination_path)
+
+            copied_size += os.path.getsize(file_path)
+            percent = copied_size / total_size * 100
+            bar_length = 30
+            filled_length = int(bar_length * percent // 100)
+            bar = "=" * filled_length + "-" * (bar_length - filled_length)
+
+            print(f"\r📦 Copying [{bar}] {percent:.2f}% ({index}/{total_files})", end="")
+        except:
+            continue
+
+    print("\n✅ Copy complete!\n")
+
+
+def save_installed_programs(destination_dir):
+    output_file = os.path.join(destination_dir, "installed_programs.txt")
+    try:
+        with open(output_file, "w", encoding="utf-8") as f:
+            result = subprocess.run("wmic product get name", capture_output=True, text=True, shell=True)
+            f.write(result.stdout)
+        print(f"📝 Installed programs list saved to: {output_file}")
+    except Exception as e:
+        print(f"⚠️ Could not save program list: {e}")
 
 
 def backup():
