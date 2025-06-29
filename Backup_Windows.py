@@ -80,11 +80,12 @@ def check_space_and_confirm(valid_dirs, goal_dir):
     usage = shutil.disk_usage(drive or goal_dir)
 
     print("\n📊 Backup Info:")
-    print(f"📁 Total files: {total_files:,}")
-    print(f"📦 Total size: {total_size / (1024**3):.2f} GB")
-    print(f"💽 Drive: {drive or goal_dir}")
+    print(f"  📁 Total files: {total_files:,}")
+    print(f"  📦 Total size: {total_size / (1024**3):.2f} GB")
+    print(f"💽 To Drive: {drive or goal_dir}")
     print(f"   • Total space: {usage.total / (1024**3):.2f} GB")
     print(f"   • Free space : {usage.free / (1024**3):.2f} GB")
+    print(f"⭕ Free space after copy backup: {(usage.free - total_size) / (1024**3):.2f} GB")
 
     if usage.free < total_size:
         short = total_size - usage.free
@@ -112,7 +113,6 @@ def backup():
         return
 
     print("\n🚀 Proceeding with backup... (not implemented in this part)")
-    # در بخش بعدی: انجام عمل کپی + نمایش درصد پیشرفت + دسته‌بندی بکاپ
 
 
 backup()
