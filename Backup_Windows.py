@@ -1,6 +1,6 @@
 import os
 import shutil
-import time
+from time import time
 import subprocess
 
 
@@ -116,6 +116,7 @@ def copy_with_progress(source_dirs, destination_root):
 
     copied_size = 0
     total_files = len(all_files)
+    start_time = time()
 
     print(f"\n📁 Starting copy of {total_files} files...\n")
 
@@ -134,8 +135,9 @@ def copy_with_progress(source_dirs, destination_root):
             bar_length = 30
             filled_length = int(bar_length * percent // 100)
             bar = "=" * filled_length + "-" * (bar_length - filled_length)
+            elapsed = time() - start_time
 
-            print(f"\r📦 Copying [{bar}] {percent:.2f}% ({index}/{total_files})", end="")
+            print(f"\r📦 Copying [{bar}] {percent:.2f}% ({index}/{total_files}) | ⏱ {elapsed:.1f}s", end="")
         except:
             continue
 
@@ -144,13 +146,24 @@ def copy_with_progress(source_dirs, destination_root):
 
 def save_installed_programs(destination_dir):
     output_file = os.path.join(destination_dir, "installed_programs.txt")
+    print("⏳ Getting installed programs...")
+
     try:
+        result = subprocess.run("wmic product get name", capture_output=True, text=True, shell=True)
+
+        lines = result.stdout.strip().splitlines()
+        names = [line.strip() for line in lines[1:] if line.strip()]
+        names.sort(key=lambda x: x.lower())
+
         with open(output_file, "w", encoding="utf-8") as f:
-            result = subprocess.run("wmic product get name", capture_output=True, text=True, shell=True)
-            f.write(result.stdout)
+            f.write("Installed Programs (A-Z):\n\n")
+            for name in names:
+                f.write(name + "\n")
+
         print(f"📝 Installed programs list saved to: {output_file}")
     except Exception as e:
         print(f"⚠️ Could not save program list: {e}")
+
 
 
 def backup():
@@ -167,7 +180,20 @@ def backup():
         print("⚠️ Backup was canceled by user or due to insufficient space.")
         return
 
-    print("\n🚀 Proceeding with backup... (not implemented in this part)")
+    print("\n🚀 Proceeding with backup...")
+
+    start_time = time()
+
+    copy_with_progress(valid_dirs, goal_dir)
+    save_installed_programs(goal_dir)
+
+    end_time = time()
+    duration = end_time - start_time
+    minutes, seconds = divmod(duration, 60)
+
+    print(f"\n🎉 Backup finished successfully in {int(minutes)} min {int(seconds)} sec!")
 
 
-backup()
+if __name__ == '__main__':
+    backup()
+
