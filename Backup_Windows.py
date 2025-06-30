@@ -165,7 +165,6 @@ def save_installed_programs(destination_dir):
         print(f"⚠️ Could not save program list: {e}")
 
 
-
 def backup():
     valid_dirs = get_valid_dirs()
     if not valid_dirs:
