@@ -210,4 +210,6 @@ __marimo__/
 
 
 #extra
-Backup_Windows.spec
+/Backup_Windows.spec
+/build/
+/build
