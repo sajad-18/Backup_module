@@ -59,10 +59,10 @@ It offers an **interactive, automated, and user-friendly** approach to selecting
 
 ---
 
-##👨‍💻 Contact Me
+## 👨‍💻 Contact Me
 - 📧 Email: [sajjad.ir8415@gmail.com](mailto:sajjad.ir8415@gmail.com)
 - 💼 LinkedIn: [Sajjad Esmaeilzadeh](https://www.linkedin.com/in/sajad-esmaeilzadeh/)
-- 🌐 Personal Website: [Sevelop.ir](www.sevelop.ir)
+- 🌐 Personal Website: [Sevelop.ir](https://www.sevelop.ir)
 
 ---
 
